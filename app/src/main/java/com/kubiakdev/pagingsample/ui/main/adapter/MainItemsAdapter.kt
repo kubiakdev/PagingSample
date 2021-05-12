@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kubiakdev.pagingsample.api.model.Book
 import com.kubiakdev.pagingsample.databinding.ItemBookDetailsBinding
 
-class MainAdapter : PagingDataAdapter<Book, MainAdapter.ViewHolder>(BookComparator) {
+class MainItemsAdapter : PagingDataAdapter<Book, MainItemsAdapter.ViewHolder>(BookComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         ItemBookDetailsBinding.inflate(LayoutInflater.from(parent.context), parent, false)

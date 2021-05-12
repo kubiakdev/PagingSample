@@ -1,11 +1,15 @@
 package com.kubiakdev.pagingsample.di.module
 
+import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.kubiakdev.pagingsample.BuildConfig
 import com.kubiakdev.pagingsample.api.ApiService
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,14 +40,22 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun providesOkHttpClient(cacheCreator: CacheCreator): OkHttpClient =
+    fun providesOkHttpClient(cacheCreator: CacheCreator, @ApplicationContext context: Context): OkHttpClient =
         OkHttpClient.Builder().apply {
-            addHttpLoggingInterceptorIfDebug(this)
+            addHttpLoggingInterceptorIfDebug(this, context)
         }
             .cache(cacheCreator.createCache())
             .build()
 
-    private fun addHttpLoggingInterceptorIfDebug(builder: OkHttpClient.Builder) {
+    private fun addHttpLoggingInterceptorIfDebug(builder: OkHttpClient.Builder, @ApplicationContext context: Context) {
+        builder.addInterceptor(
+            ChuckerInterceptor.Builder(context)
+                .collector(ChuckerCollector(context))
+                .maxContentLength(250000L)
+                .redactHeaders(emptySet())
+                .alwaysReadResponseBody(false)
+                .build()
+        )
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(createHttpLoggingInterceptor())
         }

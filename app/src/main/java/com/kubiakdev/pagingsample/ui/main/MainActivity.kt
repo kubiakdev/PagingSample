@@ -1,14 +1,16 @@
 package com.kubiakdev.pagingsample.ui.main
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
+import androidx.paging.LoadStateAdapter
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.kubiakdev.pagingsample.databinding.ActivityMainBinding
-import com.kubiakdev.pagingsample.ui.main.adapter.MainAdapter
+import com.kubiakdev.pagingsample.ui.main.adapter.MainItemsAdapter
+import com.kubiakdev.pagingsample.ui.main.adapter.MainLoadingAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,20 +25,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val pagingAdapter = MainAdapter()
-        binding.recyclerView.adapter = pagingAdapter
+        val pagingAdapter = MainItemsAdapter()
+        val mainLoadAdapter = MainLoadingAdapter(pagingAdapter::retry)
+
+        binding.recyclerView.adapter = pagingAdapter.withLoadStateAdapters(mainLoadAdapter, mainLoadAdapter)
 
         lifecycleScope.launch {
             viewModel.books.collectLatest { pagingData ->
                 pagingAdapter.submitData(pagingData)
             }
         }
+    }
 
-        pagingAdapter.addLoadStateListener { loadStates ->
-            binding.progressBar.isVisible = loadStates.refresh is LoadState.Loading
-            binding.retryButton.isVisible = loadStates.refresh is LoadState.Error
-            if (loadStates.refresh is LoadState.Error)
-                Toast.makeText(this@MainActivity, "Error occured", Toast.LENGTH_LONG).show()
+    fun <T : Any, V : RecyclerView.ViewHolder> PagingDataAdapter<T, V>.withLoadStateAdapters(
+        header: LoadStateAdapter<*>,
+        footer: LoadStateAdapter<*>
+    ): ConcatAdapter {
+        addLoadStateListener { loadStates ->
+            footer.loadState = loadStates.append
         }
+
+        return ConcatAdapter(this, footer)
     }
 }

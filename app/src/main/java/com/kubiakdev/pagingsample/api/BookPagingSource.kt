@@ -16,11 +16,12 @@ class BookPagingSource @Inject constructor(
         val limit = 5
         return try {
             val response =
-                bookRepository.loadBooks(start = pageToLoad * limit, pageToLoad * limit + limit)
+                bookRepository.loadBooks(start = pageToLoad * limit, limit)
+
             LoadResult.Page(
                 data = response,
                 prevKey = null,
-                nextKey = pageToLoad + 1
+                nextKey = if (response.isEmpty()) null else pageToLoad + 1
             )
         } catch (e: IOException) {
             // IOException for network failures.
