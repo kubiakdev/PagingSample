@@ -7,10 +7,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.kubiakdev.pagingsample.api.model.Book
+import com.kubiakdev.pagingsample.api.model.BookResponse
 import com.kubiakdev.pagingsample.databinding.ItemBookDetailsBinding
+import com.kubiakdev.pagingsample.ui.main.adapter.item.BookItem
 
-class MainItemsAdapter : PagingDataAdapter<Book, MainItemsAdapter.ViewHolder>(BookComparator) {
+class MainItemsAdapter : PagingDataAdapter<BookItem, MainItemsAdapter.ViewHolder>(BookComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         ItemBookDetailsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,7 +23,7 @@ class MainItemsAdapter : PagingDataAdapter<Book, MainItemsAdapter.ViewHolder>(Bo
 
     inner class ViewHolder(private val binding: ItemBookDetailsBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bindHolder(item: Book) {
+        fun bindHolder(item: BookItem) {
             with(binding) {
                 titleText.text = "Title: ${item.title}"
                 authorText.text = "Author: ${item.author}"

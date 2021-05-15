@@ -2,16 +2,17 @@ package com.kubiakdev.pagingsample.api
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.kubiakdev.pagingsample.api.model.Book
+import com.kubiakdev.pagingsample.api.model.BookResponse
+import com.kubiakdev.pagingsample.ui.main.adapter.item.BookItem
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 class BookPagingSource @Inject constructor(
     private val bookRepository: BookRepository
-) : PagingSource<Int, Book>() {
+) : PagingSource<Int, BookItem>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Book> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BookItem> {
         val pageToLoad = params.key ?: 0
         val limit = 5
         return try {
@@ -19,7 +20,7 @@ class BookPagingSource @Inject constructor(
                 bookRepository.loadBooks(start = pageToLoad * limit, limit)
 
             LoadResult.Page(
-                data = response,
+                data = response.map { BookItem(it.title, it.author, it.description, it.imageInBase64) },
                 prevKey = null,
                 nextKey = if (response.isEmpty()) null else pageToLoad + 1
             )
@@ -32,7 +33,7 @@ class BookPagingSource @Inject constructor(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Book>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, BookItem>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
