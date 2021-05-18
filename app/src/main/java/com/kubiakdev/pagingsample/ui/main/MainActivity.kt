@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadStateAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ConcatAdapter
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
 
+    @ExperimentalPagingApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         val pagingAdapter = MainItemsAdapter()
         val mainLoadAdapter = MainLoadingAdapter(pagingAdapter::retry)
 
-        binding.recyclerView.adapter = pagingAdapter.withLoadStateAdapters(mainLoadAdapter, mainLoadAdapter)
+        binding.recyclerView.adapter = pagingAdapter.withLoadStateAdapters(mainLoadAdapter)
 
         lifecycleScope.launch {
             viewModel.books.collectLatest { pagingData ->
@@ -38,7 +40,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun <T : Any, V : RecyclerView.ViewHolder> PagingDataAdapter<T, V>.withLoadStateAdapters(
-        header: LoadStateAdapter<*>,
         footer: LoadStateAdapter<*>
     ): ConcatAdapter {
         addLoadStateListener { loadStates ->
