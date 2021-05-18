@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         val pagingAdapter = MainItemsAdapter()
         val mainLoadAdapter = MainLoadingAdapter(pagingAdapter::retry)
 
-        binding.recyclerView.adapter = pagingAdapter.withLoadStateAdapters(mainLoadAdapter, mainLoadAdapter)
+        binding.recyclerView.adapter = pagingAdapter.withLoadStateAdapters(mainLoadAdapter)
 
         lifecycleScope.launch {
             viewModel.books.collectLatest { pagingData ->
@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun <T : Any, V : RecyclerView.ViewHolder> PagingDataAdapter<T, V>.withLoadStateAdapters(
-        header: LoadStateAdapter<*>,
         footer: LoadStateAdapter<*>
     ): ConcatAdapter {
         addLoadStateListener { loadStates ->

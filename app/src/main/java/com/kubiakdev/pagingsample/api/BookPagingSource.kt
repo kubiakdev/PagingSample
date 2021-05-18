@@ -8,15 +8,13 @@ import java.io.IOException
 import javax.inject.Inject
 
 class BookPagingSource @Inject constructor(
-    private val bookRepository: BookRepository
+    private val apiService: ApiService
 ) : PagingSource<Int, Book>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Book> {
         val pageToLoad = params.key ?: 0
-        val limit = 5
         return try {
-            val response =
-                bookRepository.loadBooks(start = pageToLoad * limit, limit)
+            val response = apiService.getBooks(start = pageToLoad * params.loadSize, params.loadSize)
 
             LoadResult.Page(
                 data = response,
