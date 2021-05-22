@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
-import com.kubiakdev.pagingsample.db.BookDao
+import com.kubiakdev.pagingsample.db.dao.BookDao
 import com.kubiakdev.pagingsample.ui.main.adapter.item.BookItem
 import javax.inject.Inject
 
@@ -15,7 +15,7 @@ class BookRepository @Inject constructor(
 
     @ExperimentalPagingApi
     val booksPagerFlow = Pager(
-        config = PagingConfig(pageSize = BookRemoteMediator.PAGE_SIZE),
+        config = PagingConfig(pageSize = BookRemoteMediator.PAGE_SIZE, prefetchDistance = 5, initialLoadSize = 5),
         remoteMediator = bookRemoteMediator
     ) {
         dao.getBooksSource() as PagingSource<Int, BookItem>
