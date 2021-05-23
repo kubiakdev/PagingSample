@@ -1,7 +1,8 @@
-package com.kubiakdev.pagingsample.api
+package com.kubiakdev.pagingsample.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.kubiakdev.pagingsample.api.ApiService
 import com.kubiakdev.pagingsample.api.model.Book
 import retrofit2.HttpException
 import java.io.IOException
