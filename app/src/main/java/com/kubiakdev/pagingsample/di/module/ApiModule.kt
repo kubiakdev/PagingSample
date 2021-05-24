@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -45,6 +46,7 @@ class ApiModule {
             addHttpLoggingInterceptorIfDebug(this, context)
         }
             .cache(cacheCreator.createCache())
+            .connectTimeout(3, TimeUnit.SECONDS)
             .build()
 
     private fun addHttpLoggingInterceptorIfDebug(builder: OkHttpClient.Builder, @ApplicationContext context: Context) {

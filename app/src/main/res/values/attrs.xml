@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ErrorView">
+        <attr name="errorView_errorImage" format="reference"/>
+        <attr name="errorView_messageText" format="reference" />
+        <attr name="errorView_retryButtonText" format="reference" />
+    </declare-styleable>
+</resources>
